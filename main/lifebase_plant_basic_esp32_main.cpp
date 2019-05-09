@@ -1,10 +1,7 @@
-/* Hello World Example
+/* Life Base's Most Basic Setup Meter
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
+   For copyright and/or -left, warranty, terms of use, and such information,
+   please have a look at the LICENSE file in the topmost directory...
 */
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -12,15 +9,18 @@
 #include "esp_system.h"
 #include "esp_spi_flash.h"
 
+extern "C" {
+   void app_main();
+}
 
-void app_main()
-{
-    printf("Hello world!\n");
+void app_main() {
+
+    printf("Hello user, this is your setup meter.\n");
 
     /* Print chip information */
     esp_chip_info_t chip_info;
     esp_chip_info(&chip_info);
-    printf("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
+    printf("We are running on an ESP32 chip with %d CPU cores, WiFi%s%s, ",
             chip_info.cores,
             (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
             (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
