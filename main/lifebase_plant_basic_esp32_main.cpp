@@ -17,6 +17,11 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 
 #define LIGHTPIN 34
 
+#define SOILMONOPIN 25
+
+#define SOILDUALAPIN 26
+#define SOILDUALDPIN 27
+
 extern "C" {
    void app_main();
 }
@@ -63,8 +68,10 @@ void app_main() {
     }
 
     printf("Current light exposure is %d\n", analogRead(LIGHTPIN));
+    printf("Current soil moisture reported from the 'mono' is %d\n", analogRead(SOILMONOPIN));
+    printf("Current soil moisture reported from the 'dual' is %d, %d\n", analogRead(SOILDUALAPIN), digitalRead(SOILDUALDPIN));
 
-    for (int i = 10; i >= 0; i--) {
+    for (int i = 2; i >= 0; i--) {
         printf("Restarting in %d seconds...\n", i);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
