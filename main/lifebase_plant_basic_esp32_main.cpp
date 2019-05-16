@@ -37,7 +37,8 @@
 
 DHT_Unified dht(DHTPIN, DHTTYPE);
 
-#define LIGHTPIN 34
+#define LIGHTSUNPIN 34
+#define LIGHTSHADEPIN 35
 
 #define SOILMONOPIN 25
 
@@ -95,9 +96,14 @@ void get_dht_info() {
     }
 }
 
-void get_sun_info() {
+void get_light_info() {
 
-    ESP_LOGI(LB_TAG, "Current light exposure is %d.\n", analogRead(LIGHTPIN));
+    ESP_LOGI(LB_TAG, "Current light sun exposure is %d.\n", analogRead(LIGHTSUNPIN));
+    ESP_LOGI(LB_TAG, "Current light shade exposure is %d.\n", analogRead(LIGHTSHADEPIN));
+}
+
+void get_soil_info() {
+
     ESP_LOGI(LB_TAG, "Current soil moisture reported from the 'mono' is %d.\n", analogRead(SOILMONOPIN));
     ESP_LOGI(LB_TAG, "Current soil moisture reported from the 'dual' is %d, %d.\n", analogRead(SOILDUALAPIN), digitalRead(SOILDUALDPIN));
 }
@@ -121,7 +127,8 @@ void app_main() {
     while (true) {
         get_dht_info();
 
-        get_sun_info();
+        get_light_info();
+        get_soil_info();
         get_cachepot_info();
 
 //        printf("Restarting in %d seconds...\n", i);
