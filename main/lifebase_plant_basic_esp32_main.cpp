@@ -11,10 +11,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 //#include "freertos/event_groups.h"
-//#include "esp_system.h"
+#include "esp_system.h"
 //#include "esp_spi_flash.h"
 #include "esp_log.h"
-//#include "nvs_flash.h"
+#include "nvs_flash.h"
 //#include "sdkconfig.h"
 
 // Sensor includes
@@ -51,7 +51,7 @@ extern "C" {
 static void get_board_info() {
 
     /* Print chip information */
-/*    esp_chip_info_t chip_info;
+    esp_chip_info_t chip_info;
     esp_chip_info(&chip_info);
     ESP_LOGI(LB_TAG, "We are running on an ESP32 chip with %d CPU cores, WiFi%s%s, ",
             chip_info.cores,
@@ -62,7 +62,6 @@ static void get_board_info() {
 
     ESP_LOGI(LB_TAG, "%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
             (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
-*/
 }
 
 static void init_sensors() {
@@ -120,7 +119,7 @@ static void get_cachepot_info() {
 #define CHARACTERISTIC_UUID "b5ab272d-66d4-40ab-9cc3-bd7dabcf3c21"
 
 static void init_ble() {
-    BLEDevice::init("LifeBase Plant Monitor");
+    BLEDevice::init("LifeBase");
     BLEServer *pServer = BLEDevice::createServer();
     BLEService *pService = pServer->createService(SERVICE_UUID);
     BLECharacteristic *pCharacteristic = pService->createCharacteristic(
@@ -128,7 +127,7 @@ static void init_ble() {
                                          BLECharacteristic::PROPERTY_READ |
                                          BLECharacteristic::PROPERTY_WRITE
                                        );
-    pCharacteristic->setValue("Hi ..");
+    pCharacteristic->setValue("Hi..");
     pService->start();
     // BLEAdvertising *pAdvertising = pServer->getAdvertising();  // this still is working for backward compatibility
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
@@ -142,7 +141,7 @@ static void init_ble() {
 void app_main() {
 
     init_sensors();
-     init_ble();
+    init_ble();
 
     get_board_info();
 
