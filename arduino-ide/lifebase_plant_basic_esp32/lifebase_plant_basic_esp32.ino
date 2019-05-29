@@ -86,6 +86,10 @@ static void init_sensors() {
     Serial.println("done.");
 }
 
+//TODO: it is probably more a problem of the device than the view...
+//TODO:   - farenheit vs. celsius? deliver both?
+//TODO:   - also send the unit?
+//TODO:     - send it via descriptor?
 static void get_dht_info() {
 
     char air_string[4];
@@ -121,6 +125,9 @@ static void get_dht_info() {
     }
 }
 
+//TODO: it is probably more a problem of the device than the view...
+//TODO:   - we might want to send descrete values instead of two
+//TODO:     (or more) sensor results, e.g. dark|shady|low|bright|burning
 static void get_light_info() {
 
     Serial.print("Current light sun exposure is ");
@@ -153,11 +160,6 @@ static void get_soil_info() {
 //    Serial.print(digitalRead(SOILDUALDPIN));
 //    Serial.println(".");
 }
-
-//void get_shade_info() {
-
-
-//}
 
 static void get_cachepot_info() {
 
