@@ -33,14 +33,15 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define LIGHTSHADEPIN 35
 
 #define SOILMONOPIN 25
-
-#define SOILDUALAPIN 26
-#define SOILDUALDPIN 27
+//#define SOILDUALAPIN 26
+//#define SOILDUALDPIN 27
 
 #define WATERPIN 33
 
 // BLE constants
 #define LB_TAG "LifeBaseMeter"
+
+// subject service
 #define SUBJECT_SERVICE_UUID "540b47b8-e337-46ca-9690-cdd6d309e7b1"
 #define SUBJECT_NAME_CHARACTERISTIC_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
 #define SUBJECT_UUID_CHARACTERISTIC_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
@@ -50,8 +51,17 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
 ///endTODO
 
-/// Measurements
-#define WATER_CACHEPOT_LEVEL_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
+/// measurements/action
+#define LIGHT_SERVICE_UUID "bb3a6903-bb8a-4b79-be3c-abfd105cbb55"
+#define LIGHT_SUN_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
+#define LIGHT_SHADE_UUID "b685c088-3e82-401f-8a51-030d3de0a5d5"
+#define AIR_SERVICE_UUID "10fc8ce8-f731-4c22-aba5-e698482fe779"
+#define AIR_TEMPERATURE_UUID "1b1090d2-8686-4557-ae77-b97ee0c507f9"
+#define AIR_HUMIDITY_UUID "b34ec97e-be28-4328-8ca5-eff8107a181d"
+#define WATER_SERVICE_UUID "dad92bf8-4895-4498-9449-9ab55ee4c30c"
+#define WATER_CACHEPOT_LEVEL_UUID "394c7715-2635-4b20-9f85-d009749817dc"
+#define SOIL_SERVICE_UUID "596b6bb6-cc61-4451-bd26-4aa5a29a58e5"
+#define SOIL_MOISTURE_UUID "54bb543c-5c7b-4275-a061-e6fec9b74914"
 
 BLEServer* ble_server = NULL;
 BLECharacteristic* subject_uuid_characteristic = NULL;
@@ -60,8 +70,8 @@ BLECharacteristic* light_sun_characteristic = NULL;
 BLECharacteristic* light_shade_characteristic = NULL;
 BLECharacteristic* air_temperature_characteristic = NULL;
 BLECharacteristic* air_humidity_characteristic = NULL;
-BLECharacteristic* soil_moisture_characteristic = NULL;
 BLECharacteristic* water_cachepot_level_characteristic = NULL;
+BLECharacteristic* soil_moisture_characteristic = NULL;
 bool device_connected = false;
 bool old_device_connected = false;
 uint32_t value = 0;
@@ -119,13 +129,16 @@ static void get_light_info() {
 static void get_soil_info() {
 
     Serial.print("Current soil moisture reported from the 'mono' is ");
-    Serial.print(analogRead(SOILMONOPIN));
+    int soil_moisture = analogRead(SOILMONOPIN);
+    char soil_moisture_string[4];
+    dtostrf(soil_moisture, 4, 0, soil_moisture_string);
+    Serial.print(soil_moisture_string);
     Serial.println(".");
-    Serial.print("Current soil moisture reported from the 'dual' is ");
-    Serial.print(analogRead(SOILDUALAPIN));
-    Serial.print(", ");
-    Serial.print(digitalRead(SOILDUALDPIN));
-    Serial.println(".");
+//    Serial.print("Current soil moisture reported from the 'dual' is ");
+//    Serial.print(analogRead(SOILDUALAPIN));
+//    Serial.print(", ");
+//    Serial.print(digitalRead(SOILDUALDPIN));
+//    Serial.println(".");
 }
 
 //void get_shade_info() {
@@ -139,8 +152,8 @@ static void get_cachepot_info() {
     int water_level = analogRead(WATERPIN);
     char water_level_string[4];
     dtostrf(water_level, 4, 0, water_level_string);
-    Serial.print(water_level);
-    set_ble_characteristic(water_level_string);
+    Serial.print(water_level_string);
+    set_ble_characteristic(water_cachepot_level_characteristic, water_level_string);
     Serial.println(".");
 }
 
@@ -161,16 +174,61 @@ static void init_ble() {
     ble_server = BLEDevice::createServer();
     ble_server->setCallbacks(new LBMServerCallbacks());
 
-    BLEService *ble_service = ble_server->createService(SUBJECT_SERVICE_UUID);
-    subject_uuid_characteristic = ble_service->createCharacteristic(
+    BLEService *subject_service = ble_server->createService(SUBJECT_SERVICE_UUID);
+    subject_uuid_characteristic = subject_service->createCharacteristic(
             SUBJECT_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    subject_name_characteristic = subject_service->createCharacteristic(
+            SUBJECT_NAME, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_WRITE |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    BLEService *light_service = ble_server->createService(LIGHT_SERVICE_UUID);
+    light_sun_characteristic = light_service->createCharacteristic(
+            LIGHT_SUN_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    light_shade_characteristic = light_service->createCharacteristic(
+            LIGHT_SHADE_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    BLEService *air_service = ble_server->createService(AIR_SERVICE_UUID);
+    air_temperature_characteristic = air_service->createCharacteristic(
+            AIR_TEMPERATURE_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    air_humidity_characteristic = air_service->createCharacteristic(
+            AIR_HUMIDITY_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    BLEService *water_service = ble_server->createService(WATER_SERVICE_UUID);
+    water_cachepot_level_characteristic = water_service->createCharacteristic(
+            WATER_CACHEPOT_LEVEL_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+    BLEService *soil_service = ble_server->createService(SOIL_SERVICE_UUID);
+    soil_moisture_characteristic = soil_service->createCharacteristic(
+            SOIL_MOISTURE_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_INDICATE
     );
 
     subject_uuid_characteristic->addDescriptor(new BLE2902());
     subject_uuid_characteristic->setValue(SUBJECT_NAME);
-    ble_service->start();
+    subject_service->start();
+    light_service->start();
+    air_service->start();
+    soil_service->start();
+    water_service->start();
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
     ble_advertising->setScanResponse(true);
@@ -178,12 +236,11 @@ static void init_ble() {
     BLEDevice::startAdvertising();
 }
 
-static void set_ble_characteristic(std::string value) {
+static void set_ble_characteristic(BLECharacteristic* characteristic, std::string value) {
     // notify changed value
     if (device_connected) {
-        subject_uuid_characteristic->setValue(value);
-//        subject_uuid_characteristic->setValue("foobar");
-        subject_uuid_characteristic->notify();
+        characteristic->setValue(value);
+        characteristic->notify();
         delay(3); // Based on BLEnotify: bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
     }
     // disconnecting
