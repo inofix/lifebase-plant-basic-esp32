@@ -88,6 +88,7 @@ static void init_sensors() {
 
 static void get_dht_info() {
 
+    char air_string[4];
     sensor_t sensor;
     dht.temperature().getSensor(&sensor);
     Serial.print("Humidity/temperature sensor is ");
@@ -103,6 +104,8 @@ static void get_dht_info() {
         Serial.print("Current temperature is ");
         Serial.print(event.temperature);
         Serial.println("°C.");
+        dtostrf(event.temperature, 4, 0, air_string);
+        set_ble_characteristic(air_temperature_characteristic, air_string);
     }
     dht.humidity().getSensor(&sensor);
     dht.humidity().getEvent(&event);
@@ -113,17 +116,26 @@ static void get_dht_info() {
         Serial.print("Current humidity is ");
         Serial.print(event.relative_humidity);
         Serial.println("%");
+        dtostrf(event.temperature, 4, 0, air_string);
+        set_ble_characteristic(air_humidity_characteristic, air_string);
     }
 }
 
 static void get_light_info() {
 
     Serial.print("Current light sun exposure is ");
-    Serial.print(analogRead(LIGHTSUNPIN));
+    int light = analogRead(LIGHTSUNPIN);
+    char light_string[4];
+    dtostrf(light, 4, 0, light_string);
+    Serial.print(light_string);
     Serial.println(".");
+    set_ble_characteristic(light_sun_characteristic, light_string);
     Serial.print("Current light shade exposure is ");
-    Serial.print(analogRead(LIGHTSHADEPIN));
+    light = analogRead(LIGHTSHADEPIN);
+    dtostrf(light, 4, 0, light_string);
+    Serial.print(light_string);
     Serial.println(".");
+    set_ble_characteristic(light_shade_characteristic, light_string);
 }
 
 static void get_soil_info() {
@@ -134,6 +146,7 @@ static void get_soil_info() {
     dtostrf(soil_moisture, 4, 0, soil_moisture_string);
     Serial.print(soil_moisture_string);
     Serial.println(".");
+    set_ble_characteristic(soil_moisture_characteristic, soil_moisture_string);
 //    Serial.print("Current soil moisture reported from the 'dual' is ");
 //    Serial.print(analogRead(SOILDUALAPIN));
 //    Serial.print(", ");
@@ -153,8 +166,8 @@ static void get_cachepot_info() {
     char water_level_string[4];
     dtostrf(water_level, 4, 0, water_level_string);
     Serial.print(water_level_string);
-    set_ble_characteristic(water_cachepot_level_characteristic, water_level_string);
     Serial.println(".");
+    set_ble_characteristic(water_cachepot_level_characteristic, water_level_string);
 }
 
 class LBMServerCallbacks: public BLEServerCallbacks {
