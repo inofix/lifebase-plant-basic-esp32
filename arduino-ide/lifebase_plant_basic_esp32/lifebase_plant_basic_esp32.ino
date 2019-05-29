@@ -45,17 +45,25 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define SUBJECT_NAME_CHARACTERISTIC_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
 #define SUBJECT_UUID_CHARACTERISTIC_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
 
-//TODO: this should be generated automatically later..
+///startTODO: this should be generated automatically later..
 #define SUBJECT_NAME "8e419fa5-375e-4b59-9dce-9b27a0e3d0e1"
 #define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
+///endTODO
 
-// Measurements
-#define WATER_LEVEL_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
+/// Measurements
+#define WATER_CACHEPOT_LEVEL_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
 
-BLEServer* pServer = NULL;
-BLECharacteristic* pCharacteristic = NULL;
-bool deviceConnected = false;
-bool oldDeviceConnected = false;
+BLEServer* ble_server = NULL;
+BLECharacteristic* subject_uuid_characteristic = NULL;
+BLECharacteristic* subject_name_characteristic = NULL;
+BLECharacteristic* light_sun_characteristic = NULL;
+BLECharacteristic* light_shade_characteristic = NULL;
+BLECharacteristic* air_temperature_characteristic = NULL;
+BLECharacteristic* air_humidity_characteristic = NULL;
+BLECharacteristic* soil_moisture_characteristic = NULL;
+BLECharacteristic* water_cachepot_level_characteristic = NULL;
+bool device_connected = false;
+bool old_device_connected = false;
 uint32_t value = 0;
 
 //#define
@@ -137,12 +145,12 @@ static void get_cachepot_info() {
 }
 
 class LBMServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) {
-      deviceConnected = true;
+    void onConnect(BLEServer* ble_server) {
+      device_connected = true;
     };
 
-    void onDisconnect(BLEServer* pServer) {
-      deviceConnected = false;
+    void onDisconnect(BLEServer* ble_server) {
+      device_connected = false;
     }
 };
 
@@ -150,44 +158,44 @@ static void init_ble() {
 
     BLEDevice::init(LB_TAG);
 
-    pServer = BLEDevice::createServer();
-    pServer->setCallbacks(new LBMServerCallbacks());
+    ble_server = BLEDevice::createServer();
+    ble_server->setCallbacks(new LBMServerCallbacks());
 
-    BLEService *pService = pServer->createService(SUBJECT_SERVICE_UUID);
-    pCharacteristic = pService->createCharacteristic(
+    BLEService *ble_service = ble_server->createService(SUBJECT_SERVICE_UUID);
+    subject_uuid_characteristic = ble_service->createCharacteristic(
             SUBJECT_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_INDICATE
     );
 
-    pCharacteristic->addDescriptor(new BLE2902());
-    pCharacteristic->setValue(SUBJECT_NAME);
-    pService->start();
-    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    pAdvertising->addServiceUUID(SUBJECT_SERVICE_UUID);
-    pAdvertising->setScanResponse(true);
-    pAdvertising->setMinPreferred(0x0);
+    subject_uuid_characteristic->addDescriptor(new BLE2902());
+    subject_uuid_characteristic->setValue(SUBJECT_NAME);
+    ble_service->start();
+    BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
+    ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
+    ble_advertising->setScanResponse(true);
+    ble_advertising->setMinPreferred(0x0);
     BLEDevice::startAdvertising();
 }
 
 static void set_ble_characteristic(std::string value) {
     // notify changed value
-    if (deviceConnected) {
-        pCharacteristic->setValue(value);
-//        pCharacteristic->setValue("foobar");
-        pCharacteristic->notify();
+    if (device_connected) {
+        subject_uuid_characteristic->setValue(value);
+//        subject_uuid_characteristic->setValue("foobar");
+        subject_uuid_characteristic->notify();
         delay(3); // Based on BLEnotify: bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
     }
     // disconnecting
-    if (!deviceConnected && oldDeviceConnected) {
+    if (!device_connected && old_device_connected) {
         delay(500); // Based on BLEnotify: give the bluetooth stack the chance to get things ready
-        pServer->startAdvertising(); // Based on BLEnotify: restart advertising
-        oldDeviceConnected = deviceConnected;
+        ble_server->startAdvertising(); // Based on BLEnotify: restart advertising
+        old_device_connected = device_connected;
     }
     // connecting
-    if (deviceConnected && !oldDeviceConnected) {
+    if (device_connected && !old_device_connected) {
         // do stuff here on connecting
-        oldDeviceConnected = deviceConnected;
+        old_device_connected = device_connected;
     }
 }
 
