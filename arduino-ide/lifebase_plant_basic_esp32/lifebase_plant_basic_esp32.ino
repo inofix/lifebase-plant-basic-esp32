@@ -7,7 +7,7 @@
     This work was inspired by examples from the arduino-ide and esp-idf, resp.
     arduino-esp:
 
-    - https://github.com/espressif/arduino-esp32/blob/master/libraries/BLE/examples/BLE_server/BLE_server.ino
+    - https://github.com/espressif/arduino-esp32/blob/master/libraries/BLE/examples/
     - https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleServer.cpp
 
     For copyright and/or -left, warranty, terms of use, and such information,
@@ -21,10 +21,7 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
-
-// System constants
-#define LB_TAG "LifeBaseMeter"
-//#define LB_NAME "Basic Plant Life Base Meter"
+#include <BLE2902.h>
 
 // Sensor constants
 #define DHTPIN 13
@@ -43,8 +40,25 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define WATERPIN 33
 
 // BLE constants
-#define SERVICE_UUID "540b47b8-e337-46ca-9690-cdd6d309e7b1"
-#define CHARACTERISTIC_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
+#define LB_TAG "LifeBaseMeter"
+#define SUBJECT_SERVICE_UUID "540b47b8-e337-46ca-9690-cdd6d309e7b1"
+#define SUBJECT_NAME_CHARACTERISTIC_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
+#define SUBJECT_UUID_CHARACTERISTIC_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
+
+//TODO: this should be generated automatically later..
+#define SUBJECT_NAME "8e419fa5-375e-4b59-9dce-9b27a0e3d0e1"
+#define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
+
+// Measurements
+#define WATER_LEVEL_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
+
+BLEServer* pServer = NULL;
+BLECharacteristic* pCharacteristic = NULL;
+bool deviceConnected = false;
+bool oldDeviceConnected = false;
+uint32_t value = 0;
+
+//#define
 
 static void init_sensors() {
 
@@ -61,7 +75,7 @@ static void get_dht_info() {
     Serial.print("Humidity/temperature sensor is ");
     Serial.print(sensor.name);
     Serial.println(".");
-    
+
     sensors_event_t event;
     dht.temperature().getEvent(&event);
     if (isnan(event.temperature)) {
@@ -114,27 +128,67 @@ static void get_soil_info() {
 static void get_cachepot_info() {
 
     Serial.print("Current water level reported is ");
-    Serial.print(analogRead(WATERPIN));
+    int water_level = analogRead(WATERPIN);
+    char water_level_string[4];
+    dtostrf(water_level, 4, 0, water_level_string);
+    Serial.print(water_level);
+    set_ble_characteristic(water_level_string);
     Serial.println(".");
 }
+
+class LBMServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+    };
+
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+    }
+};
 
 static void init_ble() {
 
     BLEDevice::init(LB_TAG);
-    BLEServer *pServer = BLEDevice::createServer();
-    BLEService *pService = pServer->createService(SERVICE_UUID);
-    BLECharacteristic *pCharacteristic = pService->createCharacteristic(
-            CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_WRITE);
 
-    pCharacteristic->setValue("Hell of a World");
+    pServer = BLEDevice::createServer();
+    pServer->setCallbacks(new LBMServerCallbacks());
+
+    BLEService *pService = pServer->createService(SUBJECT_SERVICE_UUID);
+    pCharacteristic = pService->createCharacteristic(
+            SUBJECT_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY |
+            BLECharacteristic::PROPERTY_INDICATE
+    );
+
+    pCharacteristic->addDescriptor(new BLE2902());
+    pCharacteristic->setValue(SUBJECT_NAME);
     pService->start();
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    pAdvertising->addServiceUUID(SERVICE_UUID);
+    pAdvertising->addServiceUUID(SUBJECT_SERVICE_UUID);
     pAdvertising->setScanResponse(true);
-    pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
-    pAdvertising->setMinPreferred(0x12);
+    pAdvertising->setMinPreferred(0x0);
     BLEDevice::startAdvertising();
+}
+
+static void set_ble_characteristic(std::string value) {
+    // notify changed value
+    if (deviceConnected) {
+        pCharacteristic->setValue(value);
+//        pCharacteristic->setValue("foobar");
+        pCharacteristic->notify();
+        delay(3); // Based on BLEnotify: bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
+    }
+    // disconnecting
+    if (!deviceConnected && oldDeviceConnected) {
+        delay(500); // Based on BLEnotify: give the bluetooth stack the chance to get things ready
+        pServer->startAdvertising(); // Based on BLEnotify: restart advertising
+        oldDeviceConnected = deviceConnected;
+    }
+    // connecting
+    if (deviceConnected && !oldDeviceConnected) {
+        // do stuff here on connecting
+        oldDeviceConnected = deviceConnected;
+    }
 }
 
 void setup() {
@@ -143,7 +197,6 @@ void setup() {
     init_ble();
     init_sensors();
 }
-
 
 void loop() {
     Serial.println("--");
