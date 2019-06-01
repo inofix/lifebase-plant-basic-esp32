@@ -14,31 +14,7 @@
     please have a look at the LICENSE file in the topmost directory...
 */
 
-// Sensor includes
-#include <DHT_U.h>
-
-// BLE includes
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
-#include <BLE2902.h>
-
-// Sensor constants
-#define DHTPIN 13
-#define DHTTYPE DHT22
-
-DHT_Unified dht(DHTPIN, DHTTYPE);
-
-#define LIGHTSUNPIN 34
-#define LIGHTSHADEPIN 35
-
-#define SOILMONOPIN 25
-//#define SOILDUALAPIN 26
-//#define SOILDUALDPIN 27
-
-#define WATERPIN 33
-
-// BLE constants
+// system constants
 #define LB_TAG "LifeBaseMeter"
 
 // subject service
@@ -46,22 +22,60 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define SUBJECT_NAME_CHARACTERISTIC_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
 #define SUBJECT_UUID_CHARACTERISTIC_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
 
-///startTODO: this should be generated automatically later..
+// system constants per system/setup
+/// #change# These UUIDs should differ from setup to setup
 #define SUBJECT_NAME "8e419fa5-375e-4b59-9dce-9b27a0e3d0e1"
 #define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
-///endTODO
 
-/// measurements/action
+/// measurements/action - #change# uncoment service UUIDs as needed
+///// light service configuration
 #define LIGHT_SERVICE_UUID "bb3a6903-bb8a-4b79-be3c-abfd105cbb55"
+#if defined LIGHT_SERVICE_UUID
 #define LIGHT_SUN_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
 #define LIGHT_SHADE_UUID "b685c088-3e82-401f-8a51-030d3de0a5d5"
+///// light sensor constants
+#if defined LIGHT_SUN_UUID
+#define LIGHTSUNPIN 34
+#endif
+#if defined LIGHT_SHADE_UUID
+#define LIGHTSHADEPIN 35
+#endif
+#endif
+
+//// air service configuration
 #define AIR_SERVICE_UUID "10fc8ce8-f731-4c22-aba5-e698482fe779"
+#if defined AIR_SERVICE_UUID
 #define AIR_TEMPERATURE_UUID "1b1090d2-8686-4557-ae77-b97ee0c507f9"
 #define AIR_HUMIDITY_UUID "b34ec97e-be28-4328-8ca5-eff8107a181d"
+///// air sensor includes
+#include <DHT_U.h>
+///// air sensor constants
+#define DHTPIN 13
+#define DHTTYPE DHT22
+DHT_Unified dht(DHTPIN, DHTTYPE);
+#endif
+
+
+//// water service configuration
 #define WATER_SERVICE_UUID "dad92bf8-4895-4498-9449-9ab55ee4c30c"
+#if defined WATER_SERVICE_UUID
 #define WATER_CACHEPOT_LEVEL_UUID "394c7715-2635-4b20-9f85-d009749817dc"
+#define WATERPIN 33
+#endif
+
 #define SOIL_SERVICE_UUID "596b6bb6-cc61-4451-bd26-4aa5a29a58e5"
+#if defined SOIL_SERVICE_UUID
 #define SOIL_MOISTURE_UUID "54bb543c-5c7b-4275-a061-e6fec9b74914"
+#define SOILMONOPIN 25
+//#define SOILDUALAPIN 26
+//#define SOILDUALDPIN 27
+#endif
+
+// BLE includes
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include <BLE2902.h>
 
 BLEServer* ble_server = NULL;
 BLECharacteristic* subject_uuid_characteristic = NULL;
@@ -82,7 +96,9 @@ static void init_sensors() {
 
     Serial.print("Initializing the sensors.. ");
     initArduino();
+#if defined AIR_SERVICE_UUID
     dht.begin();
+#endif
     Serial.println("done.");
 }
 
@@ -125,26 +141,6 @@ static void get_dht_info() {
     }
 }
 
-//TODO: it is probably more a problem of the device than the view...
-//TODO:   - we might want to send descrete values instead of two
-//TODO:     (or more) sensor results, e.g. dark|shady|low|bright|burning
-static void get_light_info() {
-
-    Serial.print("Current light sun exposure is ");
-    int light = analogRead(LIGHTSUNPIN);
-    char light_string[4];
-    dtostrf(light, 4, 0, light_string);
-    Serial.print(light_string);
-    Serial.println(".");
-    set_ble_characteristic(light_sun_characteristic, light_string);
-    Serial.print("Current light shade exposure is ");
-    light = analogRead(LIGHTSHADEPIN);
-    dtostrf(light, 4, 0, light_string);
-    Serial.print(light_string);
-    Serial.println(".");
-    set_ble_characteristic(light_shade_characteristic, light_string);
-}
-
 static void get_soil_info() {
 
     Serial.print("Current soil moisture reported from the 'mono' is ");
@@ -161,6 +157,8 @@ static void get_soil_info() {
 //    Serial.println(".");
 }
 
+//TODO: it is probably more a problem of the device than the view...
+//TODO:
 static void get_cachepot_info() {
 
     Serial.print("Current water level reported is ");
@@ -202,17 +200,9 @@ static void init_ble() {
             BLECharacteristic::PROPERTY_NOTIFY |
             BLECharacteristic::PROPERTY_INDICATE
     );
-    BLEService *light_service = ble_server->createService(LIGHT_SERVICE_UUID);
-    light_sun_characteristic = light_service->createCharacteristic(
-            LIGHT_SUN_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
-    );
-    light_shade_characteristic = light_service->createCharacteristic(
-            LIGHT_SHADE_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
-    );
+#if defined LIGHT_SERVICE_UUID
+    init_ble_light(ble_server);
+#endif
     BLEService *air_service = ble_server->createService(AIR_SERVICE_UUID);
     air_temperature_characteristic = air_service->createCharacteristic(
             AIR_TEMPERATURE_UUID, BLECharacteristic::PROPERTY_READ |
@@ -240,7 +230,6 @@ static void init_ble() {
     subject_uuid_characteristic->addDescriptor(new BLE2902());
     subject_uuid_characteristic->setValue(SUBJECT_NAME);
     subject_service->start();
-    light_service->start();
     air_service->start();
     soil_service->start();
     water_service->start();
@@ -282,7 +271,9 @@ void loop() {
     Serial.println("--");
     get_dht_info();
 
+#if defined LIGHT_SERVICE_UUID
     get_light_info();
+#endif
     get_soil_info();
     get_cachepot_info();
 
