@@ -118,19 +118,6 @@ static void get_soil_info() {
 //    Serial.println(".");
 }
 
-//TODO: it is probably more a problem of the device than the view...
-//TODO:
-static void get_cachepot_info() {
-
-    Serial.print("Current water level reported is ");
-    int water_level = analogRead(WATERPIN);
-    char water_level_string[4];
-    dtostrf(water_level, 4, 0, water_level_string);
-    Serial.print(water_level_string);
-    Serial.println(".");
-    set_ble_characteristic(water_cachepot_level_characteristic, water_level_string);
-}
-
 class LBMServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* ble_server) {
       device_connected = true;
@@ -167,12 +154,9 @@ static void init_ble() {
 #if defined AIR_SERVICE_UUID
     init_ble_air(ble_server);
 #endif
-    BLEService *water_service = ble_server->createService(WATER_SERVICE_UUID);
-    water_cachepot_level_characteristic = water_service->createCharacteristic(
-            WATER_CACHEPOT_LEVEL_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
-    );
+#if defined WATER_SERVICE_UUID
+    init_ble_water(ble_server);
+#endif
     BLEService *soil_service = ble_server->createService(SOIL_SERVICE_UUID);
     soil_moisture_characteristic = soil_service->createCharacteristic(
             SOIL_MOISTURE_UUID, BLECharacteristic::PROPERTY_READ |
@@ -184,7 +168,6 @@ static void init_ble() {
     subject_uuid_characteristic->setValue(SUBJECT_NAME);
     subject_service->start();
     soil_service->start();
-    water_service->start();
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
     ble_advertising->setScanResponse(true);
