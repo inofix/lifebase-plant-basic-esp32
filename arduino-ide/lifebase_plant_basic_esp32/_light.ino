@@ -27,6 +27,8 @@ static void init_ble_light(BLEServer* ble_server) {
             LIGHT_SHADE_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY
     );
+    light_sun_characteristic->addDescriptor(new BLE2902());
+    light_shade_characteristic->addDescriptor(new BLE2902());
     light_service->start();
 }
 

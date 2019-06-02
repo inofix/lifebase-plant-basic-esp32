@@ -27,6 +27,8 @@ static void init_ble_air(BLEServer* ble_server) {
             AIR_HUMIDITY_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY
     );
+    air_temperature_characteristic->addDescriptor(new BLE2902());
+    air_humidity_characteristic->addDescriptor(new BLE2902());
     air_service->start();
 }
 

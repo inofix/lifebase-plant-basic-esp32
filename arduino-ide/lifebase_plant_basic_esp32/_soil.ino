@@ -23,6 +23,7 @@ static void init_ble_soil(BLEServer* ble_server) {
             SOIL_MOISTURE_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY
     );
+    soil_moisture_characteristic->addDescriptor(new BLE2902());
     soil_service->start();
 }
 

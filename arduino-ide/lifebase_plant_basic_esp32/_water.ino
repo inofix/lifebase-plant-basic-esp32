@@ -23,6 +23,7 @@ static void init_ble_water(BLEServer* ble_server) {
             WATER_CACHEPOT_LEVEL_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY
     );
+    water_cachepot_level_characteristic->addDescriptor(new BLE2902());
     water_service->start();
 }
 

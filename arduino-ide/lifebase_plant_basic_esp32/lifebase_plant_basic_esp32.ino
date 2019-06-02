@@ -24,7 +24,7 @@
 
 // system constants per system/setup
 /// #change# These UUIDs should differ from setup to setup
-#define SUBJECT_NAME "8e419fa5-375e-4b59-9dce-9b27a0e3d0e1"
+#define SUBJECT_NAME "Most Basic Example Setup"
 #define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
 
 /// measurements/action - #change# uncoment service UUIDs as needed
@@ -121,14 +121,10 @@ static void init_ble() {
 
     BLEService *subject_service = ble_server->createService(SUBJECT_SERVICE_UUID);
     subject_uuid_characteristic = subject_service->createCharacteristic(
-            SUBJECT_UUID_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_NOTIFY
+            SUBJECT_UUID_UUID, BLECharacteristic::PROPERTY_READ
     );
     subject_name_characteristic = subject_service->createCharacteristic(
-            SUBJECT_NAME_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_NOTIFY
+            SUBJECT_NAME_UUID, BLECharacteristic::PROPERTY_READ
     );
 #if defined LIGHT_SERVICE_UUID
     init_ble_light(ble_server);
@@ -143,7 +139,7 @@ static void init_ble() {
     init_ble_soil(ble_server);
 #endif
 
-    subject_uuid_characteristic->addDescriptor(new BLE2902());
+//    subject_uuid_characteristic->addDescriptor(new BLE2902());
     subject_uuid_characteristic->setValue(SUBJECT_UUID);
     subject_name_characteristic->setValue(SUBJECT_NAME);
     subject_service->start();
