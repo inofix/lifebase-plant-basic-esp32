@@ -102,22 +102,6 @@ static void init_sensors() {
     Serial.println("done.");
 }
 
-static void get_soil_info() {
-
-    Serial.print("Current soil moisture reported from the 'mono' is ");
-    int soil_moisture = analogRead(SOILMONOPIN);
-    char soil_moisture_string[4];
-    dtostrf(soil_moisture, 4, 0, soil_moisture_string);
-    Serial.print(soil_moisture_string);
-    Serial.println(".");
-    set_ble_characteristic(soil_moisture_characteristic, soil_moisture_string);
-//    Serial.print("Current soil moisture reported from the 'dual' is ");
-//    Serial.print(analogRead(SOILDUALAPIN));
-//    Serial.print(", ");
-//    Serial.print(digitalRead(SOILDUALDPIN));
-//    Serial.println(".");
-}
-
 class LBMServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* ble_server) {
       device_connected = true;
@@ -157,17 +141,13 @@ static void init_ble() {
 #if defined WATER_SERVICE_UUID
     init_ble_water(ble_server);
 #endif
-    BLEService *soil_service = ble_server->createService(SOIL_SERVICE_UUID);
-    soil_moisture_characteristic = soil_service->createCharacteristic(
-            SOIL_MOISTURE_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
-    );
+#if defined SOIL_SERVICE_UUID
+    init_ble_soil(ble_server);
+#endif
 
     subject_uuid_characteristic->addDescriptor(new BLE2902());
     subject_uuid_characteristic->setValue(SUBJECT_NAME);
     subject_service->start();
-    soil_service->start();
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
     ble_advertising->setScanResponse(true);
