@@ -102,45 +102,6 @@ static void init_sensors() {
     Serial.println("done.");
 }
 
-//TODO: it is probably more a problem of the device than the view...
-//TODO:   - farenheit vs. celsius? deliver both?
-//TODO:   - also send the unit?
-//TODO:     - send it via descriptor?
-static void get_dht_info() {
-
-    char air_string[4];
-    sensor_t sensor;
-    dht.temperature().getSensor(&sensor);
-    Serial.print("Humidity/temperature sensor is ");
-    Serial.print(sensor.name);
-    Serial.println(".");
-
-    sensors_event_t event;
-    dht.temperature().getEvent(&event);
-    if (isnan(event.temperature)) {
-        Serial.println("Error reading temperature!");
-    }
-    else {
-        Serial.print("Current temperature is ");
-        Serial.print(event.temperature);
-        Serial.println("°C.");
-        dtostrf(event.temperature, 4, 0, air_string);
-        set_ble_characteristic(air_temperature_characteristic, air_string);
-    }
-    dht.humidity().getSensor(&sensor);
-    dht.humidity().getEvent(&event);
-    if (isnan(event.relative_humidity)) {
-        Serial.println("Error reading humidity!");
-    }
-    else {
-        Serial.print("Current humidity is ");
-        Serial.print(event.relative_humidity);
-        Serial.println("%");
-        dtostrf(event.temperature, 4, 0, air_string);
-        set_ble_characteristic(air_humidity_characteristic, air_string);
-    }
-}
-
 static void get_soil_info() {
 
     Serial.print("Current soil moisture reported from the 'mono' is ");
@@ -203,17 +164,9 @@ static void init_ble() {
 #if defined LIGHT_SERVICE_UUID
     init_ble_light(ble_server);
 #endif
-    BLEService *air_service = ble_server->createService(AIR_SERVICE_UUID);
-    air_temperature_characteristic = air_service->createCharacteristic(
-            AIR_TEMPERATURE_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
-    );
-    air_humidity_characteristic = air_service->createCharacteristic(
-            AIR_HUMIDITY_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
-    );
+#if defined AIR_SERVICE_UUID
+    init_ble_air(ble_server);
+#endif
     BLEService *water_service = ble_server->createService(WATER_SERVICE_UUID);
     water_cachepot_level_characteristic = water_service->createCharacteristic(
             WATER_CACHEPOT_LEVEL_UUID, BLECharacteristic::PROPERTY_READ |
@@ -230,7 +183,6 @@ static void init_ble() {
     subject_uuid_characteristic->addDescriptor(new BLE2902());
     subject_uuid_characteristic->setValue(SUBJECT_NAME);
     subject_service->start();
-    air_service->start();
     soil_service->start();
     water_service->start();
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
