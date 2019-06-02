@@ -21,13 +21,11 @@ static void init_ble_light(BLEServer* ble_server) {
     BLEService *light_service = ble_server->createService(LIGHT_SERVICE_UUID);
     light_sun_characteristic = light_service->createCharacteristic(
             LIGHT_SUN_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     light_shade_characteristic = light_service->createCharacteristic(
             LIGHT_SHADE_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     light_service->start();
 }

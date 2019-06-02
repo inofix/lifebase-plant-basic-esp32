@@ -21,8 +21,7 @@ static void init_ble_water(BLEServer* ble_server) {
     BLEService *water_service = ble_server->createService(WATER_SERVICE_UUID);
     water_cachepot_level_characteristic = water_service->createCharacteristic(
             WATER_CACHEPOT_LEVEL_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     water_service->start();
 }

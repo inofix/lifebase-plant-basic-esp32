@@ -19,8 +19,8 @@
 
 // subject service
 #define SUBJECT_SERVICE_UUID "540b47b8-e337-46ca-9690-cdd6d309e7b1"
-#define SUBJECT_NAME_CHARACTERISTIC_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
-#define SUBJECT_UUID_CHARACTERISTIC_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
+#define SUBJECT_NAME_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
+#define SUBJECT_UUID_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
 
 // system constants per system/setup
 /// #change# These UUIDs should differ from setup to setup
@@ -121,16 +121,14 @@ static void init_ble() {
 
     BLEService *subject_service = ble_server->createService(SUBJECT_SERVICE_UUID);
     subject_uuid_characteristic = subject_service->createCharacteristic(
-            SUBJECT_UUID, BLECharacteristic::PROPERTY_READ |
+            SUBJECT_UUID_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     subject_name_characteristic = subject_service->createCharacteristic(
-            SUBJECT_NAME, BLECharacteristic::PROPERTY_READ |
+            SUBJECT_NAME_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
 #if defined LIGHT_SERVICE_UUID
     init_ble_light(ble_server);
@@ -146,7 +144,8 @@ static void init_ble() {
 #endif
 
     subject_uuid_characteristic->addDescriptor(new BLE2902());
-    subject_uuid_characteristic->setValue(SUBJECT_NAME);
+    subject_uuid_characteristic->setValue(SUBJECT_UUID);
+    subject_name_characteristic->setValue(SUBJECT_NAME);
     subject_service->start();
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);

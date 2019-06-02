@@ -21,13 +21,11 @@ static void init_ble_air(BLEServer* ble_server) {
     BLEService *air_service = ble_server->createService(AIR_SERVICE_UUID);
     air_temperature_characteristic = air_service->createCharacteristic(
             AIR_TEMPERATURE_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     air_humidity_characteristic = air_service->createCharacteristic(
             AIR_HUMIDITY_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     air_service->start();
 }

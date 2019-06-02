@@ -21,8 +21,7 @@ static void init_ble_soil(BLEServer* ble_server) {
     BLEService *soil_service = ble_server->createService(SOIL_SERVICE_UUID);
     soil_moisture_characteristic = soil_service->createCharacteristic(
             SOIL_MOISTURE_UUID, BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE
+            BLECharacteristic::PROPERTY_NOTIFY
     );
     soil_service->start();
 }
