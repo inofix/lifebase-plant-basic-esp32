@@ -18,9 +18,9 @@
 #define LB_TAG "LifeBaseMeter"
 
 // subject service
-#define SUBJECT_SERVICE_UUID "540b47b8-e337-46ca-9690-cdd6d309e7b1"
-#define SUBJECT_NAME_UUID "a62b400e-cef0-474e-a14a-e6f5ee43e0b2"
-#define SUBJECT_UUID_UUID "abc4bca0-ea7d-4ea6-86d7-11e456ae6ed0"
+#define SUBJECT_SERVICE_UUID "54000000-e337-46ca-9690-cdd6d309e7b1"
+#define SUBJECT_NAME_UUID "54000001-e337-46ca-9690-cdd6d309e7b1"
+#define SUBJECT_UUID_UUID "54000002-e337-46ca-9690-cdd6d309e7b1"
 
 // system constants per system/setup
 /// #change# These UUIDs should differ from setup to setup
@@ -29,10 +29,10 @@
 
 /// measurements/action - #change# uncoment service UUIDs as needed
 ///// light service configuration
-#define LIGHT_SERVICE_UUID "bb3a6903-bb8a-4b79-be3c-abfd105cbb55"
+#define LIGHT_SERVICE_UUID "54010000-e337-46ca-9690-cdd6d309e7b1"
 #if defined LIGHT_SERVICE_UUID
-#define LIGHT_SUN_UUID "e835ef9e-e124-4a78-82cc-89bb863835f1"
-#define LIGHT_SHADE_UUID "b685c088-3e82-401f-8a51-030d3de0a5d5"
+#define LIGHT_SUN_UUID "54010001-e337-46ca-9690-cdd6d309e7b1"
+#define LIGHT_SHADE_UUID "54010002-e337-46ca-9690-cdd6d309e7b1"
 ///// light sensor constants
 #if defined LIGHT_SUN_UUID
 #define LIGHTSUNPIN 34
@@ -43,10 +43,10 @@
 #endif
 
 //// air service configuration
-#define AIR_SERVICE_UUID "10fc8ce8-f731-4c22-aba5-e698482fe779"
+#define AIR_SERVICE_UUID "54020000-e337-46ca-9690-cdd6d309e7b1"
 #if defined AIR_SERVICE_UUID
-#define AIR_TEMPERATURE_UUID "1b1090d2-8686-4557-ae77-b97ee0c507f9"
-#define AIR_HUMIDITY_UUID "b34ec97e-be28-4328-8ca5-eff8107a181d"
+#define AIR_TEMPERATURE_UUID "2a6e"
+#define AIR_HUMIDITY_UUID "2a6f"
 ///// air sensor includes
 #include <DHT_U.h>
 ///// air sensor constants
@@ -57,15 +57,15 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 
 
 //// water service configuration
-#define WATER_SERVICE_UUID "dad92bf8-4895-4498-9449-9ab55ee4c30c"
+#define WATER_SERVICE_UUID "54030000-e337-46ca-9690-cdd6d309e7b1"
 #if defined WATER_SERVICE_UUID
-#define WATER_CACHEPOT_LEVEL_UUID "394c7715-2635-4b20-9f85-d009749817dc"
+#define WATER_CACHEPOT_LEVEL_UUID "54030001-e337-46ca-9690-cdd6d309e7b1"
 #define WATERPIN 33
 #endif
 
-#define SOIL_SERVICE_UUID "596b6bb6-cc61-4451-bd26-4aa5a29a58e5"
+#define SOIL_SERVICE_UUID "54040000-e337-46ca-9690-cdd6d309e7b1"
 #if defined SOIL_SERVICE_UUID
-#define SOIL_MOISTURE_UUID "54bb543c-5c7b-4275-a061-e6fec9b74914"
+#define SOIL_MOISTURE_UUID "54040001-e337-46ca-9690-cdd6d309e7b1"
 #define SOILMONOPIN 25
 //#define SOILDUALAPIN 26
 //#define SOILDUALDPIN 27
