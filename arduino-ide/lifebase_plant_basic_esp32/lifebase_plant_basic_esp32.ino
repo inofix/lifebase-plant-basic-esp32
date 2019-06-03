@@ -31,13 +31,12 @@
 ///// light service configuration
 #define LIGHT_SERVICE_UUID "54010000-e337-46ca-9690-cdd6d309e7b1"
 #if defined LIGHT_SERVICE_UUID
-#define LIGHT_SUN_UUID "54010001-e337-46ca-9690-cdd6d309e7b1"
-#define LIGHT_SHADE_UUID "54010002-e337-46ca-9690-cdd6d309e7b1"
+#define LIGHT_EXPOSURE_UUID "54010001-e337-46ca-9690-cdd6d309e7b1"
+//#define LIGHT_SUN_UUID "54010002-e337-46ca-9690-cdd6d309e7b1"
+//#define LIGHT_SHADE_UUID "54010003-e337-46ca-9690-cdd6d309e7b1"
 ///// light sensor constants
-#if defined LIGHT_SUN_UUID
+#if defined LIGHT_EXPOSURE_UUID
 #define LIGHTSUNPIN 34
-#endif
-#if defined LIGHT_SHADE_UUID
 #define LIGHTSHADEPIN 35
 #endif
 #endif
@@ -54,7 +53,6 @@
 #define DHTTYPE DHT22
 DHT_Unified dht(DHTPIN, DHTTYPE);
 #endif
-
 
 //// water service configuration
 #define WATER_SERVICE_UUID "54030000-e337-46ca-9690-cdd6d309e7b1"
@@ -81,12 +79,19 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 BLEServer* ble_server = NULL;
 BLECharacteristic* subject_uuid_characteristic = NULL;
 BLECharacteristic* subject_name_characteristic = NULL;
-BLECharacteristic* light_sun_characteristic = NULL;
-BLECharacteristic* light_shade_characteristic = NULL;
+#if defined LIGHT_EXPOSURE_UUID
+BLECharacteristic* light_exposure_characteristic = NULL;
+#endif
+#if defined AIR_SERVICE_UUID
 BLECharacteristic* air_temperature_characteristic = NULL;
 BLECharacteristic* air_humidity_characteristic = NULL;
+#endif
+#if defined WATER_SERVICE_UUID
 BLECharacteristic* water_cachepot_level_characteristic = NULL;
+#endif
+#if defined SOIL_SERVICE_UUID
 BLECharacteristic* soil_moisture_characteristic = NULL;
+#endif
 bool device_connected = false;
 bool old_device_connected = false;
 uint32_t value = 0;
