@@ -76,6 +76,7 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
+#include <BLE2904.h>
 
 BLEServer* ble_server = NULL;
 BLECharacteristic* subject_uuid_characteristic = NULL;

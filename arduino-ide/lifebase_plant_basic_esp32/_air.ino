@@ -29,6 +29,13 @@ static void init_ble_air(BLEServer* ble_server) {
     );
     air_temperature_characteristic->addDescriptor(new BLE2902());
     air_humidity_characteristic->addDescriptor(new BLE2902());
+//TODO: learn how to use 2904 correctly for units..
+    BLE2904 *desc0 = new BLE2904();
+    desc0->setUnit(0x272F);
+    air_temperature_characteristic->addDescriptor(desc0);
+    BLE2904 *desc1 = new BLE2904();
+    desc1->setUnit(0x27AD);
+    air_humidity_characteristic->addDescriptor(desc1);
     air_service->start();
 }
 
