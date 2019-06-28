@@ -16,6 +16,11 @@
 
 #if defined AIR_SERVICE_UUID
 
+static void init_air() {
+
+    dht.begin();
+}
+
 static void init_ble_air(BLEServer* ble_server) {
 
     BLEService *air_service = ble_server->createService(AIR_SERVICE_UUID);

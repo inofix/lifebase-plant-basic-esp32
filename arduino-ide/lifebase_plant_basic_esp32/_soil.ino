@@ -16,6 +16,11 @@
 
 #if defined SOIL_SERVICE_UUID
 
+static void init_soil() {
+
+    pinMode(SOILMONOPIN, INPUT);
+}
+
 static void init_ble_soil(BLEServer* ble_server) {
 
     BLEService *soil_service = ble_server->createService(SOIL_SERVICE_UUID);

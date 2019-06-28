@@ -16,6 +16,12 @@
 
 #if defined LIGHT_SERVICE_UUID
 
+static void init_light() {
+
+    pinMode(LIGHTSUNPIN, INPUT);
+    pinMode(LIGHTSHADEPIN, INPUT);
+}
+
 static void init_ble_light(BLEServer* ble_server) {
 
     BLEService *light_service = ble_server->createService(LIGHT_SERVICE_UUID);

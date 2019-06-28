@@ -111,8 +111,18 @@ static void init_sensors() {
 
     Serial.print("Initializing the sensors.. ");
     initArduino();
+
+#if defined LIGHT_SERVICE_UUID
+    init_light();
+#endif
 #if defined AIR_SERVICE_UUID
-    dht.begin();
+    init_air();
+#endif
+#if defined WATER_SERVICE_UUID
+    init_water();
+#endif
+#if defined SOIL_SERVICE_UUID
+    init_soil();
 #endif
     Serial.println("done.");
 }

@@ -16,6 +16,11 @@
 
 #if defined WATER_SERVICE_UUID
 
+static void init_water() {
+
+    pinMode(WATERANALOGLEVELPIN, INPUT);
+}
+
 static void init_ble_water(BLEServer* ble_server) {
 
     BLEService *water_service = ble_server->createService(WATER_SERVICE_UUID);
