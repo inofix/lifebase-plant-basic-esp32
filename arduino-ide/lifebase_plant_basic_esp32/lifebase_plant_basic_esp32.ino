@@ -58,13 +58,19 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define WATER_SERVICE_UUID "54030000-e337-46ca-9690-cdd6d309e7b1"
 #if defined WATER_SERVICE_UUID
 #define WATER_CACHEPOT_LEVEL_UUID "54030001-e337-46ca-9690-cdd6d309e7b1"
-#define WATERPIN 33
+#define WATERANALOGLEVELPIN 33
+#define WATER_MIN_LEVEL_UUID "42b6e190-ddc5-4899-bd2f-fd17e6f72132"
+#define WATERMMINLEVEL 2
+#define WATER_MAX_LEVEL_UUID "0f9b4d97-a2ba-4613-9b65-a7a2823b2afd"
+#define WATERMMAXLEVEL 4
+#define WATER_PUMP_UUID "52afd454-d054-42db-a106-e129052359cd"
+#define WATERPUMP 15
 #endif
 
 #define SOIL_SERVICE_UUID "54040000-e337-46ca-9690-cdd6d309e7b1"
 #if defined SOIL_SERVICE_UUID
 #define SOIL_MOISTURE_UUID "54040001-e337-46ca-9690-cdd6d309e7b1"
-#define SOILMONOPIN 25
+#define SOILMONOPIN 32
 //#define SOILDUALAPIN 26
 //#define SOILDUALDPIN 27
 #endif
@@ -122,6 +128,13 @@ static void init_ble() {
 
     BLEDevice::init(LB_TAG);
 
+    // Improve the range https://community.openmqttgateway.com/t/esp32-ble-range/249/10
+    esp_err_t errRc=esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);
+    // without the following the range was only slightly better on our device (DevKit v1)
+    esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
+    esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN, ESP_PWR_LVL_P9);
+//    esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_NUM, ESP_PWR_LVL_P9);
+
     ble_server = BLEDevice::createServer();
     ble_server->setCallbacks(new LBMServerCallbacks());
 
@@ -152,7 +165,9 @@ static void init_ble() {
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
     ble_advertising->setScanResponse(true);
-    ble_advertising->setMinPreferred(0x0);
+//    ble_advertising->setMinPreferred(0x0);
+//    ble_advertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
+    ble_advertising->setMinPreferred(0x12);
     BLEDevice::startAdvertising();
 }
 
@@ -185,13 +200,19 @@ void setup() {
 
 void loop() {
     Serial.println("--");
-    get_dht_info();
 
 #if defined LIGHT_SERVICE_UUID
     get_light_info();
 #endif
+#if defined AIR_SERVICE_UUID
+    get_dht_info();
+#endif
+#if defined SOIL_SERVICE_UUID
     get_soil_info();
-    get_cachepot_info();
+#endif
+#if defined WATER_SERVICE_UUID
+    get_water_info();
+#endif
 
     // The DHT does not deliver new results faster than every 2s
     delay(2000);

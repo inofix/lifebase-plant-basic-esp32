@@ -29,10 +29,10 @@ static void init_ble_water(BLEServer* ble_server) {
 
 //TODO: it is probably more a problem of the device than the view...
 //TODO:
-static void get_cachepot_info() {
+static void get_water_info() {
 
     Serial.print("Current water level reported is ");
-    int water_level = analogRead(WATERPIN);
+    int water_level = analogRead(WATERANALOGLEVELPIN);
     char water_level_string[4];
     dtostrf(water_level, 4, 0, water_level_string);
     Serial.print(water_level_string);
