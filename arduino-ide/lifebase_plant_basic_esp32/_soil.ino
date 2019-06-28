@@ -18,7 +18,7 @@
 
 static void init_soil() {
 
-    pinMode(SOILMONOPIN, INPUT);
+    pinMode(SOILMOISTUREPIN, INPUT);
 }
 
 static void init_ble_soil(BLEServer* ble_server) {
@@ -34,7 +34,7 @@ static void init_ble_soil(BLEServer* ble_server) {
 
 static void get_soil_info() {
 
-    int soil_moisture = analogRead(SOILMONOPIN);
+    int soil_moisture = analogRead(SOILMOISTUREPIN);
     char soil_moisture_string[4];
     dtostrf(soil_moisture, 4, 0, soil_moisture_string);
     Serial.print("Current soil moisture reported from the 'mono' is ");
