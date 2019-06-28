@@ -7,8 +7,11 @@ that can be used to monitor plants.
 
 It consists of just the following sensors
   * DHT22 - humidity and temperature sensor
-  * ? photoresistor - to measure the light exposure
-  * ? - some capacitive soil moisture meter
+  * 2 photoresistors - to measure the light exposure
+  * some capacitive soil moisture meter
+  * some float switch to measure the water level
+and actuators
+  * a pump
 
 ## Installation
 
