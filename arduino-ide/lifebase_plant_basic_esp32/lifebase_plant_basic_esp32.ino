@@ -115,9 +115,6 @@ static void init_sensors() {
     Serial.print("Initializing the sensors.. ");
     initArduino();
 
-    // set the resolution for all analog sensors
-    analogReadResolution(ANALOG_RESOLUTION);
-
 #if defined LIGHT_SERVICE_UUID
     init_light();
 #endif
@@ -219,6 +216,9 @@ void setup() {
 
 void loop() {
     Serial.println("--");
+
+    // set the resolution for all analog sensors
+    analogReadResolution(ANALOG_RESOLUTION);
 
 #if defined LIGHT_SERVICE_UUID
     get_light_info();
