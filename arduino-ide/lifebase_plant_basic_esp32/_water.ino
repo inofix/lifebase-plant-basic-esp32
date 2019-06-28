@@ -19,6 +19,9 @@
 static void init_water() {
 
     pinMode(WATERANALOGLEVELPIN, INPUT);
+    pinMode(WATERMINLEVELPIN, INPUT);
+    pinMode(WATERMAXLEVELPIN, INPUT);
+    pinMode(WATERPUMPPIN, OUTPUT);
 }
 
 static void init_ble_water(BLEServer* ble_server) {
