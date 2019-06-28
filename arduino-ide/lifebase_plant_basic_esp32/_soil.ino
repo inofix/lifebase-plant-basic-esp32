@@ -37,15 +37,10 @@ static void get_soil_info() {
     int soil_moisture = analogRead(SOILMOISTUREPIN);
     char soil_moisture_string[4];
     dtostrf(soil_moisture, 4, 0, soil_moisture_string);
-    Serial.print("Current soil moisture reported from the 'mono' is ");
+    Serial.print("Current soil moisture reported is ");
     Serial.print(soil_moisture);
     Serial.println(".");
     set_ble_characteristic(soil_moisture_characteristic, soil_moisture_string);
-//    Serial.print("Current soil moisture reported from the 'dual' is ");
-//    Serial.print(analogRead(SOILDUALAPIN));
-//    Serial.print(", ");
-//    Serial.print(digitalRead(SOILDUALDPIN));
-//    Serial.println(".");
 }
 
 #endif
