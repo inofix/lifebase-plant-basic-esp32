@@ -20,6 +20,11 @@
 // The DHT does not deliver new results faster than every 2s
 #define LOOP_DELAY 2000
 
+// globally set the analog resolution to 16bit even if the
+// hardware does not support it as to have the same thresholds
+// on all boards..
+#define ANALOG_RESOLUTION 16
+
 // subject service
 #define SUBJECT_SERVICE_UUID "54000000-e337-46ca-9690-cdd6d309e7b1"
 #define SUBJECT_NAME_UUID "54000001-e337-46ca-9690-cdd6d309e7b1"
@@ -111,6 +116,9 @@ static void init_sensors() {
 
     Serial.print("Initializing the sensors.. ");
     initArduino();
+
+    // set the resolution for all analog sensors
+    analogReadResolution(ANALOG_RESOLUTION);
 
 #if defined LIGHT_SERVICE_UUID
     init_light();
