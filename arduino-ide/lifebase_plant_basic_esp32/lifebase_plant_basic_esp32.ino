@@ -17,6 +17,9 @@
 // system constants
 #define LB_TAG "LifeBaseMeter"
 
+// The DHT does not deliver new results faster than every 2s
+#define LOOP_DELAY 2000
+
 // subject service
 #define SUBJECT_SERVICE_UUID "54000000-e337-46ca-9690-cdd6d309e7b1"
 #define SUBJECT_NAME_UUID "54000001-e337-46ca-9690-cdd6d309e7b1"
@@ -214,6 +217,6 @@ void loop() {
     get_water_info();
 #endif
 
-    // The DHT does not deliver new results faster than every 2s
-    delay(2000);
+    // now, just wait for the next loop
+    delay(LOOP_DELAY);
 }
