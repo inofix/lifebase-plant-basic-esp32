@@ -41,11 +41,11 @@ static void get_water_info() {
 
     Serial.print("Current water level reported is ");
     int water_level = analogRead(WATERANALOGLEVELPIN);
-    char water_level_string[4];
-    dtostrf(water_level, 4, 0, water_level_string);
-    Serial.print(water_level_string);
+    char water_level_chars[5];
+    dtostrf(water_level, 5, 0, water_level_chars);
+    Serial.print(water_level_chars);
     Serial.println(".");
-    set_ble_characteristic(water_cachepot_level_characteristic, water_level_string);
+    set_ble_characteristic(water_cachepot_level_characteristic, water_level_chars);
 }
 
 #endif

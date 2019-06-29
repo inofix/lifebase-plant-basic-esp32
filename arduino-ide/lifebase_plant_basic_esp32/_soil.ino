@@ -35,12 +35,12 @@ static void init_ble_soil(BLEServer* ble_server) {
 static void get_soil_info() {
 
     int soil_moisture = analogRead(SOILMOISTUREPIN);
-    char soil_moisture_string[4];
-    dtostrf(soil_moisture, 4, 0, soil_moisture_string);
+    char soil_moisture_chars[5];
+    dtostrf(soil_moisture, 5, 0, soil_moisture_chars);
     Serial.print("Current soil moisture reported is ");
     Serial.print(soil_moisture);
     Serial.println(".");
-    set_ble_characteristic(soil_moisture_characteristic, soil_moisture_string);
+    set_ble_characteristic(soil_moisture_characteristic, soil_moisture_chars);
 }
 
 #endif

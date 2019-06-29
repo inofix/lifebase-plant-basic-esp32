@@ -51,7 +51,7 @@ static void init_ble_air(BLEServer* ble_server) {
 //TODO:     - send it via descriptor?
 static void get_dht_info() {
 
-    char air_string[4];
+    char air_chars[4];
     sensor_t sensor;
     dht.temperature().getSensor(&sensor);
     Serial.print("Humidity/temperature sensor is ");
@@ -67,8 +67,8 @@ static void get_dht_info() {
         Serial.print("Current temperature is ");
         Serial.print(event.temperature);
         Serial.println("°C.");
-        dtostrf(event.temperature, 4, 0, air_string);
-        set_ble_characteristic(air_temperature_characteristic, air_string);
+        dtostrf(event.temperature, 3, 1, air_chars);
+        set_ble_characteristic(air_temperature_characteristic, air_chars);
     }
     dht.humidity().getSensor(&sensor);
     dht.humidity().getEvent(&event);
@@ -79,8 +79,8 @@ static void get_dht_info() {
         Serial.print("Current humidity is ");
         Serial.print(event.relative_humidity);
         Serial.println("%");
-        dtostrf(event.temperature, 4, 0, air_string);
-        set_ble_characteristic(air_humidity_characteristic, air_string);
+        dtostrf(event.relative_humidity, 3, 1, air_chars);
+        set_ble_characteristic(air_humidity_characteristic, air_chars);
     }
 }
 
