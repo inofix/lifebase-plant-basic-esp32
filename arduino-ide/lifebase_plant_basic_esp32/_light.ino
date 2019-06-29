@@ -42,13 +42,12 @@ static void get_light_info() {
 
     int light_sun = analogRead(LIGHTSUNPIN);
     int light_shade = analogRead(LIGHTSHADEPIN);
-//TODO: figure out dynamically how long addresses are..
-    int light_percent = (light_sun + light_shade) * 100 / 8192;
+    int light_percent = (light_sun + light_shade) * 100 / ((2 << ANALOG_RESOLUTION) - 2);
     char light_string[3];
     dtostrf(light_percent, 3, 0, light_string);
     set_ble_characteristic(light_exposure_characteristic, light_string);
     Serial.print("The current light exposure is ");
-    Serial.print(light_sun);
+    Serial.print(light_percent);
     Serial.print("% - (sun: ");
     Serial.print(light_sun);
     Serial.print("; shade: ");
