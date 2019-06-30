@@ -30,9 +30,9 @@ static void init_ble_light(BLEServer* ble_server) {
             BLECharacteristic::PROPERTY_NOTIFY
     );
     light_exposure_characteristic->addDescriptor(new BLE2902());
-    BLE2904 *desc0 = new BLE2904();
-    desc0->setUnit(0x27AD);
-    light_exposure_characteristic->addDescriptor(desc0);
+//    BLE2904 *desc0 = new BLE2904();
+//    desc0->setUnit(0x27AD);
+//    light_exposure_characteristic->addDescriptor(desc0);
     light_service->start();
 }
 
