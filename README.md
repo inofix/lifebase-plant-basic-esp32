@@ -55,7 +55,9 @@ light there are standardized units that we will probably
 use (i.e. Lux), we have absolutely no idea how to handle
 soil moisture. As a pragmatic approach we will just use
 percentage for everything as a first approach and then
-later replace it with the definite unit.
+later replace it with the definite unit. Let's say, if
+the BLE unit characteristic is not set, it is assumed
+to be a temporarily percentage value.
 
 --
  [1] https://www.espressif.com/
