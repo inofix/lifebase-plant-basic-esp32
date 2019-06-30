@@ -81,6 +81,7 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define SOILMOISTUREPIN 32
 #define SOIL_MOISTURE_MIN_UUID "54040002-e337-46ca-9690-cdd6d309e7b1"
 #define SOIL_MOISTURE_MAX_UUID "54040003-e337-46ca-9690-cdd6d309e7b1"
+// see _water.ino for the concrete MAX/MIN values..
 #endif
 
 // BLE includes
