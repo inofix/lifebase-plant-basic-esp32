@@ -44,6 +44,19 @@ Afterwards just create an empty file in the top folder called
 you link all the header files you need into (\*.h) as the
 esp-idf will search them there.
 
+## Bugs
+
+Any bug report or feature request is warmly welcome via
+the issue tracker here.
+
+At the moment we have not quite decided yet how to handle
+all the values recieved from the sensors - e.g. while for
+light there are standardized units that we will probably
+use (i.e. Lux), we have absolutely no idea how to handle
+soil moisture. As a pragmatic approach we will just use
+percentage for everything as a first approach and then
+later replace it with the definite unit.
+
 --
  [1] https://www.espressif.com/
  [2] https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/index.html
