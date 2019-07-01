@@ -111,7 +111,10 @@ bool device_connected = false;
 bool old_device_connected = false;
 uint32_t value = 0;
 
-//#define
+// used by both soil and water service together to control
+// pumps/valves
+bool is_too_wet = false;
+bool is_too_dry = false;
 
 static void init_sensors() {
 

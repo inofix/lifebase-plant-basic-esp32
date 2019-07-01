@@ -61,8 +61,19 @@ static int read_soil_moisture_percentage(int PIN) {
 
     int i = (100 - (analogRead(SOILMOISTUREPIN) - SOIL_MOISTURE_ABSOLUTE_MAX) *
             100 / (SOIL_MOISTURE_ABSOLUTE_MIN - SOIL_MOISTURE_ABSOLUTE_MAX));
-    if (i < 0) {
-        i = 0;
+
+    if (i < SOIL_MOISTURE_MIN) {
+        if (i < 0) {
+            i = 0;
+        }
+        is_too_dry = true;
+        is_too_wet = false;
+    } else if (i < SOIL_MOISTURE_MAX) {
+        is_too_wet = true;
+        is_too_dry = false;
+    } else {
+        is_too_wet = false;
+        is_too_dry = false;
     }
     return i;
 }
