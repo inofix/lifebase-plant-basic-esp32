@@ -54,12 +54,37 @@ static void init_ble_water(BLEServer* ble_server) {
     water_service->start();
 }
 
+static void pump_water() {
+
+    if (is_too_dry) {
+        for (int i = 0; i < PUMP_ON_COUNT; i++) {
+            if (!is_too_wet) {
+                digitalWrite(WATERPUMPPIN, HIGH);
+                set_ble_characteristic(water_pump_characteristic, "0");
+                Serial.println("Pump is on...");
+            }
+            delay(PUMP_ON_TIME);
+            digitalWrite(WATERPUMPPIN, LOW);
+            set_ble_characteristic(water_pump_characteristic, "1");
+            Serial.println("Pump is off...");
+            loop_delay -= PUMP_ON_TIME;
+        }
+    }
+}
+
 //TODO: it is probably more a problem of the device than the view...
 //TODO:
 static void get_water_info() {
 
-    Serial.print("Current water level reported is ");
-    //set_ble_characteristic(water_cachepot_level_characteristic, water_level_chars);
+    //TODO: the max level is not used yet..
+    if (digitalRead(WATERCACHEPOTLEVELMINPIN)) {
+        set_ble_characteristic(water_cachepot_level_min_characteristic, "1");
+        Serial.println("The cachepot is full enough for the watering pump.");
+        pump_water();
+    } else {
+        set_ble_characteristic(water_cachepot_level_min_characteristic, "0");
+        Serial.println("WARNING: Please do fill the cachepot!");
+    }
 }
 
 #endif

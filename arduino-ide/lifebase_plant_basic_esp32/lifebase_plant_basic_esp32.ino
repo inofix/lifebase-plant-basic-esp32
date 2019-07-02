@@ -17,8 +17,15 @@
 // system constants
 #define LB_TAG "LifeBaseMeter"
 
-// The DHT does not deliver new results faster than every 2s
-#define LOOP_DELAY 2000
+// define the time to idle between measurements
+// note: the DHT does not deliver new results faster than every 2s
+#define LOOP_DELAY 10000
+int loop_delay;
+
+// how long should the pump run each time?
+// note: the time is substracted from the LOOP_DELAY above
+#define PUMP_ON_TIME 2000
+#define PUMP_ON_COUNT 4
 
 // globally set the analog resolution to 16bit even if the
 // hardware does not support it as to have the same thresholds
@@ -228,6 +235,8 @@ void loop() {
     // set the resolution for all analog sensors
     analogReadResolution(ANALOG_RESOLUTION);
 
+    loop_delay = LOOP_DELAY;
+
 #if defined LIGHT_SERVICE_UUID
     get_light_info();
 #endif
@@ -242,5 +251,5 @@ void loop() {
 #endif
 
     // now, just wait for the next loop
-    delay(LOOP_DELAY);
+    delay(loop_delay);
 }
