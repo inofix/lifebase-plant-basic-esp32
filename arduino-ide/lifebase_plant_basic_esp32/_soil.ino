@@ -103,8 +103,8 @@ static int read_soil_moisture_percentage(int PIN) {
     } else {
         soil_moisture_min = 0;
         soil_moisture_max = 100;
-        set_ble_characteristic(soil_moisture_min_characteristic, 0);
-        set_ble_characteristic(soil_moisture_max_characteristic, 100);
+        set_ble_characteristic(soil_moisture_min_characteristic, "0");
+        set_ble_characteristic(soil_moisture_max_characteristic, "100");
         is_too_wet = false;
         is_too_dry = false;
     }
