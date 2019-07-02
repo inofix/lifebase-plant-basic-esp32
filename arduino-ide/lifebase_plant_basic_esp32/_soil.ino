@@ -118,7 +118,14 @@ static void get_soil_info() {
     dtostrf(soil_moisture, 3, 0, soil_moisture_chars);
     Serial.print("Current soil moisture reported is ");
     Serial.print(soil_moisture);
-    Serial.println("%.");
+    Serial.print("%. This is actually ");
+    if (is_too_dry) {
+        Serial.println("too dry!");
+    } else if (is_too_wet) {
+        Serial.println("too wet!");
+    } else {
+        Serial.println("just fine.");
+    }
     set_ble_characteristic(soil_moisture_characteristic, soil_moisture_chars);
 }
 
