@@ -65,13 +65,11 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 //// water service configuration
 #define WATER_SERVICE_UUID "54030000-e337-46ca-9690-cdd6d309e7b1"
 #if defined WATER_SERVICE_UUID
-#define WATER_CACHEPOT_LEVEL_UUID "54030001-e337-46ca-9690-cdd6d309e7b1"
-#define WATERANALOGLEVELPIN 33
-#define WATER_MIN_LEVEL_UUID "54030002-e337-46ca-9690-cdd6d309e7b1"
-#define WATERMINLEVELPIN 2
-#define WATER_MAX_LEVEL_UUID "54030003-e337-46ca-9690-cdd6d309e7b1"
-#define WATERMAXLEVELPIN 4
-#define WATER_PUMP_UUID "54030004-e337-46ca-9690-cdd6d309e7b1"
+#define WATER_CACHEPOT_LEVEL_MIN_UUID "54030001-e337-46ca-9690-cdd6d309e7b1"
+#define WATERCACHEPOTLEVELMINPIN 2
+#define WATER_CACHEPOT_LEVEL_MAX_UUID "54030002-e337-46ca-9690-cdd6d309e7b1"
+#define WATERCACHEPOTLEVELMAXPIN 4
+#define WATER_PUMP_UUID "54030003-e337-46ca-9690-cdd6d309e7b1"
 #define WATERPUMPPIN 15
 #endif
 
@@ -102,7 +100,9 @@ BLECharacteristic* air_temperature_characteristic = NULL;
 BLECharacteristic* air_humidity_characteristic = NULL;
 #endif
 #if defined WATER_SERVICE_UUID
-BLECharacteristic* water_cachepot_level_characteristic = NULL;
+BLECharacteristic* water_cachepot_level_min_characteristic = NULL;
+BLECharacteristic* water_cachepot_level_max_characteristic = NULL;
+BLECharacteristic* water_pump_characteristic = NULL;
 #endif
 #if defined SOIL_SERVICE_UUID
 BLECharacteristic* soil_moisture_characteristic = NULL;

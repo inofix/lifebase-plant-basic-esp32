@@ -18,20 +18,39 @@
 
 static void init_water() {
 
-    pinMode(WATERANALOGLEVELPIN, INPUT);
-    pinMode(WATERMINLEVELPIN, INPUT);
-    pinMode(WATERMAXLEVELPIN, INPUT);
+    pinMode(WATERCACHEPOTLEVELMINPIN, INPUT);
+    pinMode(WATERCACHEPOTLEVELMAXPIN, INPUT);
     pinMode(WATERPUMPPIN, OUTPUT);
 }
 
 static void init_ble_water(BLEServer* ble_server) {
 
     BLEService *water_service = ble_server->createService(WATER_SERVICE_UUID);
-    water_cachepot_level_characteristic = water_service->createCharacteristic(
-            WATER_CACHEPOT_LEVEL_UUID, BLECharacteristic::PROPERTY_READ |
+    water_cachepot_level_min_characteristic = water_service->createCharacteristic(
+            WATER_CACHEPOT_LEVEL_MIN_UUID, BLECharacteristic::PROPERTY_READ |
             BLECharacteristic::PROPERTY_NOTIFY
     );
-    water_cachepot_level_characteristic->addDescriptor(new BLE2902());
+    water_cachepot_level_max_characteristic = water_service->createCharacteristic(
+            WATER_CACHEPOT_LEVEL_MAX_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY
+    );
+    water_pump_characteristic = water_service->createCharacteristic(
+            WATER_PUMP_UUID, BLECharacteristic::PROPERTY_READ |
+            BLECharacteristic::PROPERTY_NOTIFY
+    );
+    water_cachepot_level_min_characteristic->addDescriptor(new BLE2902());
+    water_cachepot_level_max_characteristic->addDescriptor(new BLE2902());
+    water_pump_characteristic->addDescriptor(new BLE2902());
+    BLE2904 *desc0 = new BLE2904();
+    desc0->setFormat(0x01);
+    desc0->setUnit(0x2700);
+    BLE2904 *desc1 = new BLE2904();
+    desc1->setFormat(0x01);
+    desc1->setUnit(0x2700);
+    BLE2904 *desc2 = new BLE2904();
+    desc2->setFormat(0x01);
+    desc2->setUnit(0x2700);
+
     water_service->start();
 }
 
@@ -40,12 +59,7 @@ static void init_ble_water(BLEServer* ble_server) {
 static void get_water_info() {
 
     Serial.print("Current water level reported is ");
-    int water_level = analogRead(WATERANALOGLEVELPIN);
-    char water_level_chars[5];
-    dtostrf(water_level, 5, 0, water_level_chars);
-    Serial.print(water_level_chars);
-    Serial.println(".");
-    set_ble_characteristic(water_cachepot_level_characteristic, water_level_chars);
+    //set_ble_characteristic(water_cachepot_level_characteristic, water_level_chars);
 }
 
 #endif
