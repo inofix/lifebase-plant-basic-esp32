@@ -106,6 +106,8 @@ BLECharacteristic* water_cachepot_level_characteristic = NULL;
 #endif
 #if defined SOIL_SERVICE_UUID
 BLECharacteristic* soil_moisture_characteristic = NULL;
+BLECharacteristic* soil_moisture_min_characteristic = NULL;
+BLECharacteristic* soil_moisture_max_characteristic = NULL;
 #endif
 bool device_connected = false;
 bool old_device_connected = false;
