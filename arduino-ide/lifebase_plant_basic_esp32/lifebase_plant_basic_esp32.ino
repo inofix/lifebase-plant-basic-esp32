@@ -73,11 +73,11 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #define WATER_SERVICE_UUID "54030000-e337-46ca-9690-cdd6d309e7b1"
 #if defined WATER_SERVICE_UUID
 #define WATER_CACHEPOT_LEVEL_MIN_UUID "54030001-e337-46ca-9690-cdd6d309e7b1"
-#define WATERCACHEPOTLEVELMINPIN 2
+#define WATERCACHEPOTLEVELMINPIN 4
 #define WATER_CACHEPOT_LEVEL_MAX_UUID "54030002-e337-46ca-9690-cdd6d309e7b1"
-#define WATERCACHEPOTLEVELMAXPIN 4
+#define WATERCACHEPOTLEVELMAXPIN 15
 #define WATER_PUMP_UUID "54030003-e337-46ca-9690-cdd6d309e7b1"
-#define WATERPUMPPIN 15
+#define WATERPUMPPIN 2
 #endif
 
 #define SOIL_SERVICE_UUID "54040000-e337-46ca-9690-cdd6d309e7b1"
@@ -196,8 +196,8 @@ static void init_ble() {
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
     ble_advertising->setScanResponse(true);
-//    ble_advertising->setMinPreferred(0x0);
-//    ble_advertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
+    ble_advertising->setMinPreferred(0x0);
+    ble_advertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
     ble_advertising->setMinPreferred(0x12);
     BLEDevice::startAdvertising();
 }
