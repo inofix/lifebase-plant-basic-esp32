@@ -7,26 +7,23 @@
 // System includes
 #include <stdio.h>
 //#include <stdlib.h>
-//#include <string.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 //#include "freertos/event_groups.h"
 #include "esp_system.h"
-#include "esp_spi_flash.h"
+//#include "esp_spi_flash.h"
 #include "esp_log.h"
-//#include "nvs_flash.h"
+#include "nvs_flash.h"
 //#include "sdkconfig.h"
-
-// BLE includes
-//#include "bt.h"
-//#include "bta_api.h"
-//#include "esp_gap_ble_api.h"
-//#include "esp_gatts_api.h"
-//#include "esp_bt_defs.h"
-//#include "esp_bt_main.h"
 
 // Sensor includes
 #include "DHT_U.h"
+
+// BLE includes
+#include "BLEDevice.h"
+#include "BLEServer.h"
+#include "BLEUtils.h"
 
 // System constants
 #define LB_TAG "LifeBaseMeter"
@@ -51,7 +48,7 @@ extern "C" {
    void app_main();
 }
 
-void get_board_info() {
+static void get_board_info() {
 
     /* Print chip information */
     esp_chip_info_t chip_info;
@@ -67,13 +64,13 @@ void get_board_info() {
             (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 }
 
-void init_sensors() {
+static void init_sensors() {
 
     initArduino();
     dht.begin();
 }
 
-void get_dht_info() {
+static void get_dht_info() {
 
     sensor_t sensor;
     dht.temperature().getSensor(&sensor);
@@ -96,13 +93,13 @@ void get_dht_info() {
     }
 }
 
-void get_light_info() {
+static void get_light_info() {
 
     ESP_LOGI(LB_TAG, "Current light sun exposure is %d.\n", analogRead(LIGHTSUNPIN));
     ESP_LOGI(LB_TAG, "Current light shade exposure is %d.\n", analogRead(LIGHTSHADEPIN));
 }
 
-void get_soil_info() {
+static void get_soil_info() {
 
     ESP_LOGI(LB_TAG, "Current soil moisture reported from the 'mono' is %d.\n", analogRead(SOILMONOPIN));
     ESP_LOGI(LB_TAG, "Current soil moisture reported from the 'dual' is %d, %d.\n", analogRead(SOILDUALAPIN), digitalRead(SOILDUALDPIN));
@@ -113,14 +110,38 @@ void get_soil_info() {
 
 //}
 
-void get_cachepot_info() {
+static void get_cachepot_info() {
 
     ESP_LOGI(LB_TAG, "Current water level reported is %d.\n", analogRead(WATERPIN));
+}
+
+#define SERVICE_UUID        "a9a05640-5655-4db4-a4be-0df1adfcb932"
+#define CHARACTERISTIC_UUID "b5ab272d-66d4-40ab-9cc3-bd7dabcf3c21"
+
+static void init_ble() {
+    BLEDevice::init("LifeBase");
+    BLEServer *pServer = BLEDevice::createServer();
+    BLEService *pService = pServer->createService(SERVICE_UUID);
+    BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+                                         CHARACTERISTIC_UUID,
+                                         BLECharacteristic::PROPERTY_READ |
+                                         BLECharacteristic::PROPERTY_WRITE
+                                       );
+    pCharacteristic->setValue("Hi..");
+    pService->start();
+    // BLEAdvertising *pAdvertising = pServer->getAdvertising();  // this still is working for backward compatibility
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->addServiceUUID(SERVICE_UUID);
+    pAdvertising->setScanResponse(true);
+    pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
+    pAdvertising->setMinPreferred(0x12);
+    BLEDevice::startAdvertising();
 }
 
 void app_main() {
 
     init_sensors();
+    init_ble();
 
     get_board_info();
 
@@ -134,7 +155,4 @@ void app_main() {
 //        printf("Restarting in %d seconds...\n", i);
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
-    printf("Restarting now.\n");
-    fflush(stdout);
-    esp_restart();
 }
