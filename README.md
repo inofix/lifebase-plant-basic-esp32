@@ -29,16 +29,16 @@ we recommend using this solution:
 
   * Install the Arduino IDE
   * Add the board
-   * Go to: "Tools", "Board"
-   * Choose:
-    * "DOIT ESP32 DEVKIT V1"
+    * Go to: "Tools", "Board"
+    * Choose:
+      * "DOIT ESP32 DEVKIT V1"
   * Add the libraries
-   * Go to: "Sketch", "Include Library", "Manage Libraries"
-   * Choose:
-    * "Adafruit Unified Sensor"
-    * "DHT sensor library"
-    * "ESP32"
-    * "ESP32 BLE Arduino"
+    * Go to: "Sketch", "Include Library", "Manage Libraries"
+    * Choose:
+      * "Adafruit Unified Sensor"
+      * "DHT sensor library"
+      * "ESP32"
+      * "ESP32 BLE Arduino"
 
 The development is in the subfolder calles `arduino-ide`, just
 open the main .ino file in your IDE.
