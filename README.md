@@ -59,17 +59,17 @@ later replace it with the definite unit. Let's say, if
 the BLE unit characteristic is not set, it is assumed
 to be a temporarily percentage value.
 
---
- [1] https://www.espressif.com/
- [2] https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/index.html
- [3] https://github.com/espressif/esp-idf.git
- [4] https://github.com/espressif/crosstool-NG.git
- [5] https://docs.espressif.com/projects/esp-idf/en/latest/
- [6] https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html#setup-toolchain
- [7] https://www.arduino.cc/
- [8] https://github.com/espressif/arduino-esp32.git
- [9] http://adafruit.com/
- [10] https://github.com/adafruit/Adafruit\_Sensor
- [11] https://github.com/adafruit/DHT-sensor-library
- [12] https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html
- [13] https://github.com/espressif/arduino-esp32/blob/master/docs/esp-idf_component.md
+---
+    [1] https://www.espressif.com/
+    [2] https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/index.html
+    [3] https://github.com/espressif/esp-idf.git
+    [4] https://github.com/espressif/crosstool-NG.git
+    [5] https://docs.espressif.com/projects/esp-idf/en/latest/
+    [6] https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html#setup-toolchain
+    [7] https://www.arduino.cc/
+    [8] https://github.com/espressif/arduino-esp32.git
+    [9] http://adafruit.com/
+    [10] https://github.com/adafruit/Adafruit\_Sensor
+    [11] https://github.com/adafruit/DHT-sensor-library
+    [12] https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html
+    [13] https://github.com/espressif/arduino-esp32/blob/master/docs/esp-idf_component.md
