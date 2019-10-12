@@ -41,7 +41,7 @@ int loop_delay;
 
 // system constants per system/setup
 /// #change# These UUIDs should differ from setup to setup
-#define SUBJECT_NAME "Prototype #0"
+#define SUBJECT_NAME "Development #0"
 #define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
 #define SUBJECT_TYPE "Most Basic Setup"
 #define SUBJECT_TYPE_ID "480859ba-60b8-4307-a622-aab418ce01ce"
