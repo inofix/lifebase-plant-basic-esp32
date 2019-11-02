@@ -19,7 +19,7 @@
 
 // define the time to idle between measurements
 // note: the DHT does not deliver new results faster than every 2s
-#define LOOP_DELAY 10000
+#define LOOP_DELAY 60000
 int loop_delay;
 
 // how long should the pump run each time?
@@ -41,7 +41,7 @@ int loop_delay;
 
 // system constants per system/setup
 /// #change# These UUIDs should differ from setup to setup
-#define SUBJECT_NAME "Prototype #0"
+#define SUBJECT_NAME "Development #0"
 #define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
 #define SUBJECT_TYPE "Most Basic Setup"
 #define SUBJECT_TYPE_ID "480859ba-60b8-4307-a622-aab418ce01ce"
@@ -50,14 +50,13 @@ int loop_delay;
 ///// light service configuration
 #define LIGHT_SERVICE_UUID "54010000-e337-46ca-9690-cdd6d309e7b1"
 #if defined LIGHT_SERVICE_UUID
+///// light sensor includes
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_TSL2561_U.h>
+//#include <Adafruit_TSL2591_U.h>
 #define LIGHT_EXPOSURE_UUID "54010001-e337-46ca-9690-cdd6d309e7b1"
-//#define LIGHT_SUN_UUID "54010002-e337-46ca-9690-cdd6d309e7b1"
-//#define LIGHT_SHADE_UUID "54010003-e337-46ca-9690-cdd6d309e7b1"
-///// light sensor constants
-#if defined LIGHT_EXPOSURE_UUID
-#define LIGHTSUNPIN 34
-#define LIGHTSHADEPIN 35
-#endif
+#define LIGHT_EXPOSURE_I2C_UID 1
 #endif
 
 //// air service configuration

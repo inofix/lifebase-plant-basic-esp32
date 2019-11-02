@@ -9,17 +9,22 @@
 
     - https://github.com/espressif/arduino-esp32/blob/master/libraries/BLE/examples/
     - https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleServer.cpp
+    - https://github.com/adafruit/Adafruit_TSL2561
 
     For copyright and/or -left, warranty, terms of use, and such information,
     please have a look at the LICENSE file in the topmost directory...
 */
 
 #if defined LIGHT_SERVICE_UUID
+Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, LIGHT_EXPOSURE_I2C_UID);
 
 static void init_light() {
 
-    pinMode(LIGHTSUNPIN, INPUT);
-    pinMode(LIGHTSHADEPIN, INPUT);
+    tsl.enableAutoRange(true);
+
+    /* Changing the integration time gives you better sensor resolution (402ms = 16-bit data) */
+    tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_402MS);  /* 16-bit data but slowest conversions */
+    tsl.begin();
 }
 
 static void init_ble_light(BLEServer* ble_server) {
@@ -40,19 +45,20 @@ static void init_ble_light(BLEServer* ble_server) {
 //        - let's use a custom defined percentage value for now
 static void get_light_info() {
 
-    int light_sun = analogRead(LIGHTSUNPIN);
-    int light_shade = analogRead(LIGHTSHADEPIN);
-    int light_percent = (light_sun + light_shade) * 100 / ((2 << ANALOG_RESOLUTION) - 2);
+    sensors_event_t event;
+    tsl.getEvent(&event);
+
+    int light_value = 0;
+    if (event.light) {
+        light_value = event.light;
+    }
+
     char light_chars[3];
-    dtostrf(light_percent, 3, 0, light_chars);
+    dtostrf(light_value, 3, 0, light_chars);
     set_ble_characteristic(light_exposure_characteristic, light_chars);
     Serial.print("The current light exposure is ");
-    Serial.print(light_percent);
-    Serial.print("% - (sun: ");
-    Serial.print(light_sun);
-    Serial.print("; shade: ");
-    Serial.print(light_shade);
-    Serial.println(").");
+    Serial.print(light_value);
+    Serial.println(" Lux");
 }
 
 #endif
