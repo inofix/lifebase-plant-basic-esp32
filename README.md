@@ -39,6 +39,7 @@ we recommend using this solution:
     * "DHT sensor library"
     * "ESP32"
     * "ESP32 BLE Arduino"
+    * "Adafruit TSL2591" (or TSL2561 resp.)
 
 The development is in the subfolder calles `arduino-ide`, just
 open the main .ino file in your IDE.
