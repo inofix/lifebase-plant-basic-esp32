@@ -29,9 +29,9 @@ we recommend using this solution:
 
   * Install the Arduino IDE
   * Add the board
-   * Go to: "Tools", "Board"
-   * Choose:
-    * "DOIT ESP32 DEVKIT V1"
+    * Go to: "Tools", "Board"
+    * Choose:
+      * "DOIT ESP32 DEVKIT V1"
   * Add the libraries
    * Go to: "Sketch", "Include Library", "Manage Libraries"
    * Choose:
