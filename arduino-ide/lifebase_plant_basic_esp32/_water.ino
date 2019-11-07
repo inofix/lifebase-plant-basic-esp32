@@ -76,6 +76,7 @@ static void pump_water() {
 //TODO:
 static void get_water_info() {
 
+    // just to be sure ..
     digitalWrite(WATERPUMPPIN, LOW);
     set_ble_characteristic(water_pump_characteristic, "1");
     //TODO: the max level is not used yet..
@@ -87,6 +88,7 @@ static void get_water_info() {
         set_ble_characteristic(water_cachepot_level_min_characteristic, "0");
         Serial.println("WARNING: Please do fill the cachepot!");
     }
+    // just to be sure ..
     digitalWrite(WATERPUMPPIN, LOW);
     set_ble_characteristic(water_pump_characteristic, "1");
     Serial.println("Pump is off...");
