@@ -36,15 +36,15 @@ int loop_delay;
 #define SUBJECT_SERVICE_UUID "54000000-e337-46ca-9690-cdd6d309e7b1"
 #define SUBJECT_NAME_UUID "54000001-e337-46ca-9690-cdd6d309e7b1"
 #define SUBJECT_UUID_UUID "54000002-e337-46ca-9690-cdd6d309e7b1"
-#define SUBJECT_TYPE_UUID "54000003-e337-46ca-9690-cdd6d309e7b1"
-#define SUBJECT_TYPE_ID_UUID "54000004-e337-46ca-9690-cdd6d309e7b1"
+#define SUBJECT_TYPE_NAME_UUID "54000003-e337-46ca-9690-cdd6d309e7b1"
+#define SUBJECT_TYPE_UUID_UUID "54000004-e337-46ca-9690-cdd6d309e7b1"
 
 // system constants per system/setup
 /// #change# These UUIDs should differ from setup to setup
-#define SUBJECT_NAME "Development #0"
-#define SUBJECT_UUID "e9979b5f-c2c7-45f6-8377-7c94e0b1a7e4"
-#define SUBJECT_TYPE "Most Basic Setup"
-#define SUBJECT_TYPE_ID "480859ba-60b8-4307-a622-aab418ce01ce"
+#define SUBJECT_NAME "{{ SUBJECT_NAME }}"
+#define SUBJECT_UUID "{{ SUBJECT_UUID }}"
+#define SUBJECT_TYPE_NAME "{{ SUBJECT_TYPE_NAME }}"
+#define SUBJECT_TYPE_UUID "{{ SUBJECT_TYPE_UUID }}"
 
 /// measurements/action - #change# uncoment service UUIDs as needed
 ///// light service configuration
@@ -182,10 +182,10 @@ static void init_ble() {
             SUBJECT_NAME_UUID, BLECharacteristic::PROPERTY_READ
     );
     subject_type_characteristic = subject_service->createCharacteristic(
-            SUBJECT_TYPE_UUID, BLECharacteristic::PROPERTY_READ
+            SUBJECT_TYPE_NAME_UUID, BLECharacteristic::PROPERTY_READ
     );
     subject_type_id_characteristic = subject_service->createCharacteristic(
-            SUBJECT_TYPE_ID_UUID, BLECharacteristic::PROPERTY_READ
+            SUBJECT_TYPE_UUID_UUID, BLECharacteristic::PROPERTY_READ
     );
 #if defined LIGHT_SERVICE_UUID
     init_ble_light(ble_server);
@@ -203,8 +203,8 @@ static void init_ble() {
 //    subject_uuid_characteristic->addDescriptor(new BLE2902());
     subject_uuid_characteristic->setValue(SUBJECT_UUID);
     subject_name_characteristic->setValue(SUBJECT_NAME);
-    subject_type_characteristic->setValue(SUBJECT_TYPE);
-    subject_type_id_characteristic->setValue(SUBJECT_TYPE_ID);
+    subject_type_characteristic->setValue(SUBJECT_TYPE_NAME);
+    subject_type_id_characteristic->setValue(SUBJECT_TYPE_UUID);
     subject_service->start();
     BLEAdvertising *ble_advertising = BLEDevice::getAdvertising();
     ble_advertising->addServiceUUID(SUBJECT_SERVICE_UUID);
