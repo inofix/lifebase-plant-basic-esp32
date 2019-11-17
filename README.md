@@ -11,7 +11,7 @@ we use the development board from DOIT[3] (DOIT ESP32 DEVKIT V1).
 The current setup consists of just the following sensors
 
   * DHT22 - humidity and temperature sensor
-  * 2 photoresistors - to measure the light exposure
+  * TSL2561 - to measure the light exposure
   * some capacitive soil moisture meter
   * some float switch to measure the water level and actuators
   * a pump
